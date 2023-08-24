@@ -29,13 +29,33 @@ def normal_mixture(x: np.ndarray, sigmas: list, mus: list, weights: list):
         tot_sum = tot_sum + p1
     return tot_sum
 print(normal_mixture(np.linspace(-2, 2, 4), [0.5], [0], [1]))
-'''
-def _compare_components_and_mixture():
+
+def compare_components_and_mixture():
     # Part 2.2
+    plt.clf
+    plot_normal(0.5,0,-5,5)
+    plot_normal(1.5,-0.5,-5,5)
+    plot_normal(0.25,1.5,-5,5)
+    x = np.linspace(-5, 5, num=500)
+    y = normal_mixture(x, [0.5, 1.5, 0.25], [0, -0.5, 1.5], [1/3, 1/3, 1/3])
+    plt.plot(x, y)
+    plt.show()
+compare_components_and_mixture()
 
 def sample_gaussian_mixture(sigmas: list, mus: list, weights: list, n_samples: int = 500):
     # Part 3.1
+    samp = np.zeros(n_samples)
+    times = np.random.multinomial(n_samples, weights)
+    size = len(weights)
+    i = 0
+    j = 0
+    for i in range(0, size-1):
+        for j in range(0, times[i]-1):
+            samp[j] = np.random.normal(mus[i], sigmas[i])
+    return(samp)
+sample_gaussian_mixture([0.1, 1], [-1, 1], [0.9, 0.1], 3)
 
+'''
 def _plot_mixture_and_samples():
     # Part 3.2
 
