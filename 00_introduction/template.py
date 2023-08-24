@@ -44,16 +44,17 @@ compare_components_and_mixture()
 
 def sample_gaussian_mixture(sigmas: list, mus: list, weights: list, n_samples: int = 500):
     # Part 3.1
-    samp = np.zeros(n_samples)
+    samp = [0]*n_samples
     times = np.random.multinomial(n_samples, weights)
     size = len(weights)
-    i = 0
-    j = 0
     for i in range(0, size-1):
         for j in range(0, times[i]-1):
-            samp[j] = np.random.normal(mus[i], sigmas[i])
+            for k in range(0, n_samples):
+                samp[k] = np.random.normal(mus[i], sigmas[i])
+
     return(samp)
-sample_gaussian_mixture([0.1, 1], [-1, 1], [0.9, 0.1], 3)
+
+print(sample_gaussian_mixture([0.1, 1], [-1, 1], [0.9, 0.1], 3))
 
 '''
 def _plot_mixture_and_samples():
