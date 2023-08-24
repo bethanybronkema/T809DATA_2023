@@ -17,7 +17,6 @@ def plot_three_normals():
     plot_normal(0.25, 1, -5, 5)
     plot_normal(1, 1.5, -5, 5)
     plt.show()
-    plt.savefig(1_2_1)
 plot_three_normals()
 
 def normal_mixture(x: np.ndarray, sigmas: list, mus: list, weights: list):
@@ -29,8 +28,7 @@ def normal_mixture(x: np.ndarray, sigmas: list, mus: list, weights: list):
         p1 = coef*np.exp(in_par)
         tot_sum = tot_sum + p1
     return tot_sum
-print(normal_mixture(np.linspace(-5, 5, 5), [0.5, 0.25, 1], [0, 1, 1.5], [1/3, 1/3, 1/3]))
-
+print(normal_mixture(np.linspace(-2, 2, 4), [0.5], [0], [1]))
 '''
 def _compare_components_and_mixture():
     # Part 2.2
