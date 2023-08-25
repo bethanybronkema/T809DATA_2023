@@ -43,6 +43,7 @@ def compare_components_and_mixture():
 def sample_gaussian_mixture(sigmas: list, mus: list, weights: list, n_samples: int = 500):
     # Part 3.1
     samp = [0]*n_samples
+    np.random.seed(0)
     times = np.random.multinomial(n_samples, weights)
     size = len(weights)
     for i in range(0, size-1):
