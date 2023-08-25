@@ -54,12 +54,33 @@ def sample_gaussian_mixture(sigmas: list, mus: list, weights: list, n_samples: i
 
     return(samp)
 
-print(sample_gaussian_mixture([0.1, 1], [-1, 1], [0.9, 0.1], 3))
 
-'''
-def _plot_mixture_and_samples():
+
+def plot_mixture_and_samples():
     # Part 3.2
+    plt.clf
+    x = np.linspace(-5, 5, num=500)
+    y = normal_mixture(x, [0.3, 0.5, 1], [0, -1, 1.5], [0.2, 0.3, 0.5])
+    plt.figure(1)
+    plt.subplot(141)
+    plt.plot(x, y)
+    samples = sample_gaussian_mixture([0.3, 0.5, 1], [0, -1, 1.5], [0.2, 0.3, 0.5], 10)
+    plt.hist(samples, 10, density = True)
+    plt.subplot(142)
+    plt.plot(x, y)
+    samples = sample_gaussian_mixture([0.3, 0.5, 1], [0, -1, 1.5], [0.2, 0.3, 0.5], 100)
+    plt.hist(samples, 100, density = True)
+    plt.subplot(143)
+    plt.plot(x, y)
+    samples = sample_gaussian_mixture([0.3, 0.5, 1], [0, -1, 1.5], [0.2, 0.3, 0.5], 500)
+    plt.hist(samples, 500, density = True)
+    plt.subplot(144)
+    plt.plot(x, y)
+    samples = sample_gaussian_mixture([0.3, 0.5, 1], [0, -1, 1.5], [0.2, 0.3, 0.5], 1000)
+    plt.hist(samples, 1000, density = True)
+    plt.show()
+
 
 if __name__ == '__main__':
     # select your function to test here and do `python3 template.py`
-'''
+    plot_mixture_and_samples()
