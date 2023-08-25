@@ -49,7 +49,6 @@ def sample_gaussian_mixture(sigmas: list, mus: list, weights: list, n_samples: i
         for j in range(0, times[i]-1):
             for k in range(0, n_samples):
                 samp[k] = np.random.normal(mus[i], sigmas[i])
-
     return(samp)
 
 
