@@ -80,11 +80,11 @@ def weighted_impurity(
     Given targets of two branches, return the weighted
     sum of gini branch impurities
     '''
-    g1 = gini_impurity(...)
-    g2 = gini_impurity(...)
-    n = t1.shape[0] + t2.shape[0]
-    ...
-
+    g1 = gini_impurity(t1, classes)
+    g2 = gini_impurity(t2, classes)
+    n = len(t1) + len(t2)
+    impurity = (len(t1)*g1)/n + (len(t2)*g2)/n
+    return impurity
 
 def total_gini_impurity(
     features: np.ndarray,
@@ -97,8 +97,9 @@ def total_gini_impurity(
     Calculate the gini impurity for a split on split_feature_index
     for a given dataset of features and targets.
     '''
-    ...
-
+    (f_1, t_1), (f_2, t_2) = split_data(features, targets, split_feature_index, theta)
+    impurity = weighted_impurity(t_1, t_2, classes)
+    return impurity
 
 def brute_best_split(
     features: np.ndarray,
@@ -115,15 +116,20 @@ def brute_best_split(
     '''
     best_gini, best_dim, best_theta = float("inf"), None, None
     # iterate feature dimensions
+    store = 1
     for i in range(features.shape[1]):
         # create the thresholds
-        thetas = ...
+        thetas = np.linspace(min(features[:,i]),  max(features[:,i]), num_tries + 2)
         # iterate thresholds
         for theta in thetas:
-            ...
+            test = total_gini_impurity(features, targets, classes, i, theta)
+            if test < store:
+                store = test
+                best_gini, best_dim, best_theta = store, i, theta
+
     return best_gini, best_dim, best_theta
 
-
+print(brute_best_split(features, targets, classes, 30))
 class IrisTreeTrainer:
     def __init__(
         self,
