@@ -1,6 +1,6 @@
-# Author: 
-# Date:
-# Project: 
+# Author: Bethany Bronkema
+# Date: 30 August 2023
+# Project: Decision Trees
 # Acknowledgements: 
 #
 
@@ -18,8 +18,15 @@ def prior(targets: np.ndarray, classes: list) -> np.ndarray:
     Calculate the prior probability of each class type
     given a list of all targets and all class types
     '''
-    ...
+    sum = np.zeros(len(classes))
+    prob_class = np.zeros(len(classes))
+    for i in range(len(classes)):
+        for j in range(len(targets)):
+            if targets[j] == classes[i]:
+                sum[i] += 1
+    prob_class = sum/len(targets)
 
+    return prob_class
 
 def split_data(
     features: np.ndarray,
@@ -38,7 +45,8 @@ def split_data(
     targets_2 = targets[...]
 
     return (features_1, targets_1), (features_2, targets_2)
-
+features, targets, classes = load_iris()
+(f_1, t_1), (f_2, t_2) = split_data(features, targets, 2, 4.65)
 
 def gini_impurity(targets: np.ndarray, classes: list) -> float:
     '''
@@ -139,3 +147,4 @@ class IrisTreeTrainer:
 
     def confusion_matrix(self):
         ...
+
