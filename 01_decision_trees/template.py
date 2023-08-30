@@ -71,8 +71,6 @@ def gini_impurity(targets: np.ndarray, classes: list) -> float:
     impurity = 1/2 * (1-sum)
     return impurity
 
-print(gini_impurity(t_2, classes))
-
 def weighted_impurity(
     t1: np.ndarray,
     t2: np.ndarray,
