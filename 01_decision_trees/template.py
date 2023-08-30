@@ -38,13 +38,24 @@ def split_data(
     Split a dataset and targets into two seperate datasets
     where data with split_feature < theta goes to 1 otherwise 2
     '''
-    features_1 = features[...]
-    targets_1 = targets[...]
+    #create the lists
+    features_1 = []
+    targets_1 = []
 
-    features_2 = features[...]
-    targets_2 = targets[...]
+    features_2 = []
+    targets_2 = []
+
+    #split the data
+    for i in range(len(features)):
+        if features[i,split_feature_index] < theta:
+            features_1.append(features[i])
+            targets_1.append(targets[i])
+        else:
+            features_2.append(features[i])
+            targets_2.append(targets[i])    
 
     return (features_1, targets_1), (features_2, targets_2)
+
 features, targets, classes = load_iris()
 (f_1, t_1), (f_2, t_2) = split_data(features, targets, 2, 4.65)
 
@@ -53,8 +64,14 @@ def gini_impurity(targets: np.ndarray, classes: list) -> float:
     Calculate:
         i(S_k) = 1/2 * (1 - sum_i P{C_i}**2)
     '''
-    ...
+    sum = 0
+    prior_prob = prior(targets, classes)
+    for i in range(len(prior_prob)):
+        sum += np.square(prior_prob[i])        
+    impurity = 1/2 * (1-sum)
+    return impurity
 
+print(gini_impurity(t_2, classes))
 
 def weighted_impurity(
     t1: np.ndarray,
