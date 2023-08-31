@@ -9,6 +9,7 @@ from typing import Union
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.tree import DecisionTreeClassifier, plot_tree
+from sklearn.metrics import accuracy_score
 
 from tools import load_iris, split_train_test
 
@@ -129,7 +130,6 @@ def brute_best_split(
 
     return best_gini, best_dim, best_theta
 
-print(brute_best_split(features, targets, classes, 30))
 class IrisTreeTrainer:
     def __init__(
         self,
@@ -150,13 +150,15 @@ class IrisTreeTrainer:
         self.tree = DecisionTreeClassifier()
 
     def train(self):
-        ...
+        return self.tree.fit(features, targets)
 
     def accuracy(self):
+        tree_test = IrisTreeTrainer.train(self)
         ...
-
+    
     def plot(self):
-        ...
+        plot_tree(self)
+        plt.show()
 
     def plot_progress(self):
         # Independent section
@@ -169,3 +171,12 @@ class IrisTreeTrainer:
     def confusion_matrix(self):
         ...
 
+#implementation of Iris Tree Trainer class
+features, targets, classes = load_iris()
+dt = IrisTreeTrainer(features, targets, classes=classes)
+dt.train()
+print(f'The accuracy is: {dt.accuracy()}')
+#dt.plot()
+#print(f'I guessed: {dt.guess()}')
+#print(f'The true targets are: {dt.test_targets}')
+#print(dt.confusion_matrix())
