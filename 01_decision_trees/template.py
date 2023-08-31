@@ -9,7 +9,6 @@ from typing import Union
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.tree import DecisionTreeClassifier, plot_tree
-from sklearn.metrics import accuracy_score
 
 from tools import load_iris, split_train_test
 
@@ -101,6 +100,7 @@ def total_gini_impurity(
     (f_1, t_1), (f_2, t_2) = split_data(features, targets, split_feature_index, theta)
     impurity = weighted_impurity(t_1, t_2, classes)
     return impurity
+print(total_gini_impurity(features, targets, classes, 2, 4.65))
 
 def brute_best_split(
     features: np.ndarray,
@@ -129,6 +129,7 @@ def brute_best_split(
                 best_gini, best_dim, best_theta = store, i, theta
 
     return best_gini, best_dim, best_theta
+print(brute_best_split(features, targets, classes, 30))
 
 class IrisTreeTrainer:
     def __init__(
@@ -150,14 +151,13 @@ class IrisTreeTrainer:
         self.tree = DecisionTreeClassifier()
 
     def train(self):
-        return self.tree.fit(features, targets)
+        return self.tree.fit(self.train_features, self.train_targets)
 
     def accuracy(self):
-        tree_test = IrisTreeTrainer.train(self)
-        ...
+        return self.tree.score(self.test_features, self.test_targets)
     
     def plot(self):
-        plot_tree(self)
+        plot_tree(self.tree)
         plt.show()
 
     def plot_progress(self):
@@ -166,17 +166,24 @@ class IrisTreeTrainer:
         ...
 
     def guess(self):
-        ...
+        return self.tree.predict(self.test_features)
 
     def confusion_matrix(self):
-        ...
-
+        con_mat = np.zeros((3, 3))
+        guess = self.guess()
+        targ = self.test_targets
+        for i in range(len(targ)):
+            con_mat[guess[i],targ[i]] += 1
+        return con_mat
+            
+'''
 #implementation of Iris Tree Trainer class
 features, targets, classes = load_iris()
 dt = IrisTreeTrainer(features, targets, classes=classes)
 dt.train()
 print(f'The accuracy is: {dt.accuracy()}')
-#dt.plot()
-#print(f'I guessed: {dt.guess()}')
-#print(f'The true targets are: {dt.test_targets}')
-#print(dt.confusion_matrix())
+dt.plot()
+print(f'I guessed: {dt.guess()}')
+print(f'The true targets are: {dt.test_targets}')
+print(dt.confusion_matrix())
+'''
