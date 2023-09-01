@@ -174,12 +174,3 @@ class IrisTreeTrainer:
             con_mat[guess[i],targ[i]] += 1
         return con_mat
             
-#implementation of Iris Tree Trainer class
-features, targets, classes = load_iris()
-dt = IrisTreeTrainer(features, targets, classes=classes)
-dt.train()
-print(f'The accuracy is: {dt.accuracy()}')
-dt.plot()
-print(f'I guessed: {dt.guess()}')
-print(f'The true targets are: {dt.test_targets}')
-print(dt.confusion_matrix())
