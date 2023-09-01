@@ -129,7 +129,6 @@ def brute_best_split(
                 best_gini, best_dim, best_theta = store, i, theta
 
     return best_gini, best_dim, best_theta
-print(brute_best_split(features, targets, classes, 30))
 
 class IrisTreeTrainer:
     def __init__(
