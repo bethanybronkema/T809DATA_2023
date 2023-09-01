@@ -100,7 +100,6 @@ def total_gini_impurity(
     (f_1, t_1), (f_2, t_2) = split_data(features, targets, split_feature_index, theta)
     impurity = weighted_impurity(t_1, t_2, classes)
     return impurity
-print(total_gini_impurity(features, targets, classes, 2, 4.65))
 
 def brute_best_split(
     features: np.ndarray,
