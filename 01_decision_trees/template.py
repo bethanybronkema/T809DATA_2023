@@ -158,11 +158,6 @@ class IrisTreeTrainer:
         plot_tree(self.tree)
         plt.show()
 
-    def plot_progress(self):
-        # Independent section
-        # Remove this method if you don't go for independent section.
-        ...
-
     def guess(self):
         return self.tree.predict(self.test_features)
 
