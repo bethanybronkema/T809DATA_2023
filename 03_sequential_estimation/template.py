@@ -25,7 +25,8 @@ def gen_data(
     return X
 
 np.random.seed(1234)
-print(gen_data(2, 3, np.array([0, 1, -1]), 1.3))
+
+X = gen_data(300, 3, [0, 1, -1], np.sqrt(3))
 
 def update_sequence_mean(
     mu: np.ndarray,
@@ -34,8 +35,14 @@ def update_sequence_mean(
 ) -> np.ndarray:
     '''Performs the mean sequence estimation update
     '''
-    ...
+    new_mu = np.zeros(len(x))
+    for i in range(np.shape(x)):
+        new_mu[i] = mu + (1/n)*(x[:,i]-mu)
+        mu.append(new_mu[i])
 
+mean = np.mean(X, 0)
+new_x = gen_data(1, 3, np.array([0, 0, 0]), 1)
+print(update_sequence_mean(mean, new_x, X.shape[0]))
 
 def _plot_sequence_estimate():
     data = ...
