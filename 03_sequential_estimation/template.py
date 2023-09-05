@@ -1,6 +1,6 @@
-# Author: 
-# Date:
-# Project: 
+# Author: Bethany Bronkema
+# Date: 05 September 2023
+# Project: Sequential Estimation
 # Acknowledgements: 
 #
 
@@ -20,8 +20,12 @@ def gen_data(
     '''Generate n values samples from the k-variate
     normal distribution
     '''
-    ...
+    I = np.identity(k)
+    X = np.random.multivariate_normal(mean, np.square(var)*I, n)
+    return X
 
+np.random.seed(1234)
+print(gen_data(2, 3, np.array([0, 1, -1]), 1.3))
 
 def update_sequence_mean(
     mu: np.ndarray,
