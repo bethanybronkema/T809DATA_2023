@@ -33,17 +33,17 @@ def update_sequence_mean(
     x: np.ndarray,
     n: int
 ) -> np.ndarray:
-    '''Performs the mean sequence estimation update
     '''
-    new_mu = np.zeros(len(x))
-    for i in range(np.shape(x)):
-        new_mu[i] = mu + (1/n)*(x[:,i]-mu)
-        mu.append(new_mu[i])
+    Performs the mean sequence estimation update
+    '''
+    for i in range(np.shape(x)[1]):
+        mu[i] = mu[i] + (1/(n+i+1))*(x[:,i]-mu[i])
+    return mu
 
 mean = np.mean(X, 0)
 new_x = gen_data(1, 3, np.array([0, 0, 0]), 1)
 print(update_sequence_mean(mean, new_x, X.shape[0]))
-
+print(np.shape(mean))
 def _plot_sequence_estimate():
     data = ...
     estimates = [np.array([0, 0, 0])]
