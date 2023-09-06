@@ -36,24 +36,26 @@ def update_sequence_mean(
     '''
     Performs the mean sequence estimation update
     '''
-    for i in range(np.shape(x)[1]):
-        mu[i] = mu[i] + (1/(n+i+1))*(x[:,i]-mu[i])
+    mu = mu + (1/(n+1))*(x-mu)
     return mu
-
+'''
 mean = np.mean(X, 0)
 new_x = gen_data(1, 3, np.array([0, 0, 0]), 1)
 print(update_sequence_mean(mean, new_x, X.shape[0]))
-print(np.shape(mean))
+'''
+
 def _plot_sequence_estimate():
-    data = ...
+    data = gen_data(100, 3, np.array([0, 0, 0]), 1)
     estimates = [np.array([0, 0, 0])]
     for i in range(data.shape[0]):
-        ...
+        estimates = np.append(estimates, [update_sequence_mean(estimates[i], data[i], i+1)], axis = 0)
     plt.plot([e[0] for e in estimates], label='First dimension')
-    ...
+    plt.plot([e[1] for e in estimates], label='Second dimension')
+    plt.plot([e[2] for e in estimates], label='Third dimension')
     plt.legend(loc='upper center')
     plt.show()
 
+_plot_sequence_estimate()
 
 def _square_error(y, y_hat):
     ...
