@@ -1,6 +1,6 @@
-# Author: 
-# Date:
-# Project: 
+# Author: Bethany Bronkema
+# Date: 6 September
+# Project: Linear Regression
 # Acknowledgements: 
 #
 
@@ -13,7 +13,6 @@ import matplotlib.pyplot as plt
 
 from tools import load_regression_iris
 from scipy.stats import multivariate_normal
-
 
 def mvn_basis(
     features: np.ndarray,
@@ -35,12 +34,29 @@ def mvn_basis(
     * fi - [NxM] is the basis function vectors containing a basis function
     output fi for each data vector x in features
     '''
-    ...
 
+    phi_guess = np.empty((features.shape[0],mu.shape[0]))
+    for i in range(features.shape[0]):
+        for k in range(mu.shape[0]):
+            phi_guess[i,k] = multivariate_normal.pdf(features[i], mu[k], sigma); phi_guess
+    return phi_guess
+
+X, t = load_regression_iris()
+N, D = X.shape
+M, sigma = 10, 10
+mu = np.zeros((M, D))
+for i in range(D):
+    mmin = np.min(X[i, :])
+    mmax = np.max(X[i, :])
+    mu[:, i] = np.linspace(mmin, mmax, M)
+fi = mvn_basis(X, mu, sigma)
 
 def _plot_mvn():
-    ...
+    for i in range(fi.shape[1]):
+        plt.plot(np.linspace(0, fi.shape[0], fi.shape[0]), fi[:,i])
+    plt.show()
 
+_plot_mvn()
 
 def max_likelihood_linreg(
     fi: np.ndarray,
