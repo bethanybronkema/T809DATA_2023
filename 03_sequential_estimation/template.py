@@ -36,7 +36,7 @@ def update_sequence_mean(
     '''
     Performs the mean sequence estimation update
     '''
-    mu = mu + (1/(n + 1)) * (x - mu)
+    mu = mu + (1/n) * (x - mu)
     return mu
 '''
 mean = np.mean(X, 0)
