@@ -36,7 +36,7 @@ def update_sequence_mean(
     '''
     Performs the mean sequence estimation update
     '''
-    mu = mu + (1/n) * (x - mu)
+    mu = mu + (1/(n+1)) * (x - mu)
     return mu
 '''
 mean = np.mean(X, 0)
@@ -70,21 +70,4 @@ def _plot_mean_square_error():
     plt.plot(error)
     plt.show()
 
-_plot_mean_square_error()
-
 # Naive solution to the independent question.
-
-def gen_changing_data(
-    n: int,
-    k: int,
-    start_mean: np.ndarray,
-    end_mean: np.ndarray,
-    var: float
-) -> np.ndarray:
-    # remove this if you don't go for the independent section
-    ...
-
-
-def _plot_changing_sequence_estimate():
-    # remove this if you don't go for the independent section
-    ...
