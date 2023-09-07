@@ -56,8 +56,6 @@ def _plot_mvn():
         plt.plot(np.linspace(0, fi.shape[0], fi.shape[0]), fi[:,i])
     plt.show()
 
-_plot_mvn()
-
 def max_likelihood_linreg(
     fi: np.ndarray,
     targets: np.ndarray,
@@ -73,8 +71,9 @@ def max_likelihood_linreg(
 
     Output: [Mx1], the maximum likelihood estimate of w for the linear model
     '''
-    ...
-
+    I = np.identity(fi.shape[1])
+    omegas = np.linalg.inv(lamda * I + (np.transpose(fi) @ fi)) @ np.transpose(fi) @ targets
+    return omegas
 
 def linear_model(
     features: np.ndarray,
@@ -94,4 +93,19 @@ def linear_model(
 
     Output: [Nx1] The prediction for each data vector in features
     '''
-    ...
+    fi = mvn_basis(features, mu, sigma) # same as before
+    y = fi @ w
+    return y
+
+lamda = 0.001
+wml = max_likelihood_linreg(fi, t, lamda) # as before
+prediction = linear_model(X, mu, sigma, wml)
+
+f = open("1_5_1.txt", "w+")
+f.write("As can be clearly seen from the plot of the square error, these predictions are reasonably accurate for class 0 of irises, less accurate for class 1, and even less accuate for class 2.")
+
+x = np.linspace(0, len(t), len(t))
+sqr_err = np.square(t-prediction)
+plt.plot(x, sqr_err, label="square error")
+leg = plt.legend(loc='upper center')
+plt.show()
