@@ -36,13 +36,8 @@ def update_sequence_mean(
     '''
     Performs the mean sequence estimation update
     '''
-    mu = mu + (1/(n+1)) * (x - mu)
+    mu = mu + (1/(n)) * (x - mu)
     return mu
-'''
-mean = np.mean(X, 0)
-new_x = gen_data(1, 3, np.array([0, 0, 0]), 1)
-print(update_sequence_mean(mean, new_x, X.shape[0]))
-'''
 
 def _plot_sequence_estimate():
     data = gen_data(100, 3, np.array([0, 0, 0]), 1)
