@@ -1,3 +1,17 @@
-from dbfread import DBF
-for record in DBF ("landsat.dbf"):
-    print(record)
+import dbf
+
+source_dbf = 'Research Project/landsat.dbf'
+
+dbf1 = dbf.Table(source_dbf)
+i = 1
+dbf2 = dbf.Table('landsat2.dbf', 'field1 C(10); field2 N(5,2)')
+
+dbf1.open(dbf.READ_WRITE)
+dbf2.open(dbf.READ_WRITE)
+for record in dbf1:
+    if i > 10000:
+        dbf2.append(record)
+        i += 1
+        dbf1.delete(record)
+dbf1.close()
+dbf2.close()
