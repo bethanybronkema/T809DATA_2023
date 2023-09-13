@@ -34,6 +34,7 @@ def mvn_basis(
     * fi - [NxM] is the basis function vectors containing a basis function
     output fi for each data vector x in features
     '''
+    pass
 
     phi_guess = np.empty((features.shape[0],mu.shape[0]))
     for i in range(features.shape[0]):

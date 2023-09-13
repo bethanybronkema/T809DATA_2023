@@ -48,6 +48,9 @@ You can also use `tools.bar_per_axis` to visualize the distribution of the data 
 
 Do you expect the batch estimate to be exactly $(0, 1, -1)$ ? Which two parameters can be used to make this estimate more accurate?
 
+### Section 1.3
+Continue to section `1.4`.
+
 ### Section 1.4
 We will now implement the sequential estimate.
 
@@ -59,7 +62,7 @@ Example inputs and outputs:
 ```
 mean = np.mean(X, 0)
 new_x = gen_data(1, 3, np.array([0, 0, 0]), 1)
-update_sequence_mean(mean, new_x, X.shape[0])
+update_sequence_mean(mean, new_x, X.shape[0]+1)
 ```
 
 Results in an array, similar to `[[-0.21653761 -0.00721158 -0.15876203]]` (since we're using random numbers, the values you get will probably not be exactly the same).
@@ -67,7 +70,7 @@ Gradescope wil use `np.random.seed(1234)` before generating the data to test thi
 
 ### Section 1.5
 Lets plot the estimates on all dimensions as the sequence estimate gets updated. You can use `_plot_sequence_estimate()` as a template. You should:
-* Generate 100 3-dimensional points with the same mean and variance as above.
+* Generate 100 3-dimensional points with mean `[0, 0, 0]` and variance `4`.
 * Set the initial estimate as $(0, 0, 0)$
 * And perform `update_sequence_mean` for each point in the set.
 * Collect the estimates as you go
@@ -92,6 +95,26 @@ For a different distribution this plot looks like the following:
 ![Rolling error](./images/rolling_error.png)
 
 Turn in your plot as `1_6_1.png`
+
+### What to turn in to Gradescope
+*Read this carefully before you submit your solution.*
+
+You should edit `template.py` to include your own code.
+
+This is an individual project so you can of course help each other out but your code should be your own.
+
+You are not allowed to import any non-built in packages that are not already imported.
+
+Files to turn in:
+
+- `template.py`: This is your code
+- `1_2_1.txt`
+- `1_5_1.png`
+- `1_6_1.png`
+
+Make sure the file names are exact.
+Submission that do not pass the first two tests in Gradescope will not be graded.
+
 
 ## Independent Section (optional)
 What happens if the mean value changes (perhaps slowly) with time? What if  $\mu =(0,1,-1)$ moves to  $\mu=(1,-1,0)$ in 500 time ticks? How would we track the mean? Some sort of a forgetting could be added to the update equation. How would that be done?
