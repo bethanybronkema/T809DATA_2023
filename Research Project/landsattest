@@ -9,7 +9,7 @@ dbf2 = dbf.Table('landsat2.dbf', 'field1 C(10); field2 N(5,2)')
 dbf1.open(dbf.READ_WRITE)
 dbf2.open(dbf.READ_WRITE)
 for record in dbf1:
-    if i > 10000:
+    if i > 1000:
         dbf2.append(record)
         i += 1
         dbf1.delete(record)
