@@ -1,1 +1,0 @@
-No, I wouldn't expect the estimate to be exactly the mean provided, because it there is a random element to the data generated. In order to make this more accurate, we could reduce the variance or increase the number of samples taken.

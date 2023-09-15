@@ -101,10 +101,11 @@ def linear_model(
 lamda = 0.001
 wml = max_likelihood_linreg(fi, t, lamda) # as before
 prediction = linear_model(X, mu, sigma, wml)
-
+print(prediction)
+'''
 f = open("1_5_1.txt", "w+")
 f.write("As can be clearly seen from the plot of the square error, these predictions are reasonably accurate for class 0 of irises, less accurate for class 1, and even less accuate for class 2.")
-
+'''
 x = np.linspace(0, len(t), len(t))
 sqr_err = np.square(t-prediction)
 plt.plot(x, sqr_err, label="square error")
