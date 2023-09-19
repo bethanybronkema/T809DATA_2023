@@ -38,18 +38,14 @@ def covar_of_class(
     '''
     collect_cov = np.empty((0, features.shape[1]))
     for i in range(features.shape[0]):
-        print(i)
         if targets[i] == selected_class:
             collect_cov = np.append(collect_cov, [features[i]], axis = 0)
-        print(collect_cov)
-        return np.cov(collect_cov)
+    return np.cov(collect_cov, rowvar = False)
 
 np.random.seed(1234)
 features, targets, classes = load_iris()
 (train_features, train_targets), (test_features, test_targets)\
     = split_train_test(features, targets, train_ratio=0.6)   
- 
-print(covar_of_class(train_features, train_targets, 0))
 
 def likelihood_of_class(
     feature: np.ndarray,
@@ -61,8 +57,11 @@ def likelihood_of_class(
     from a multivariate normal distribution, given the mean
     and covariance of the distribution.
     '''
-    ...
-
+    prob = multivariate_normal.pdf(feature, class_mean, class_covar)
+    return prob
+np.random.seed(1234)
+class_mean = mean_of_class(train_features, train_targets, 0)
+class_cov = covar_of_class(train_features, train_targets, 0)
 
 def maximum_likelihood(
     train_features: np.ndarray,
@@ -79,14 +78,17 @@ def maximum_likelihood(
     a [test_features.shape[0] x len(classes)] shaped numpy
     array
     '''
-    means, covs = [], []
+    means, covs = np.empty((0, test_features.shape[1])), np.empty((0, test_features.shape[1], test_features.shape[1]))
     for class_label in classes:
-        ...
-    likelihoods = []
+        means = np.append(means, [mean_of_class(train_features, train_targets, class_label)], axis = 0) 
+        covs = np.append(covs, [covar_of_class(train_features, train_targets, class_label)], axis = 0)
+    likelihoods = np.empty((0, len(classes)))
+    likelihood_row = np.zeros(len(classes))
     for i in range(test_features.shape[0]):
-        ...
+        for j in classes:
+            likelihood_row[j] = likelihood_of_class(test_features[i], means[j], covs[j])
+        likelihoods = np.append(likelihoods, [likelihood_row], axis = 0)
     return np.array(likelihoods)
-
 
 def predict(likelihoods: np.ndarray):
     '''
@@ -97,8 +99,14 @@ def predict(likelihoods: np.ndarray):
     You should return a [likelihoods.shape[0]] shaped numpy
     array of predictions, e.g. [0, 1, 0, ..., 1, 2]
     '''
-    ...
+    pred = np.zeros(likelihoods.shape[0])
+    for i in range(likelihoods.shape[0]):
+        pred[i] = np.argmax(likelihoods[i])
+    return pred
 
+np.random.seed(1234)
+likelihoods_max = maximum_likelihood(train_features, train_targets, test_features, classes)
+predictions_max = predict(likelihoods_max)
 
 def maximum_aposteriori(
     train_features: np.ndarray,
@@ -115,4 +123,46 @@ def maximum_aposteriori(
     a [test_features.shape[0] x len(classes)] shaped numpy
     array
     '''
-    ...
+    means, covs = np.empty((0, test_features.shape[1])), np.empty((0, test_features.shape[1], test_features.shape[1]))
+    for class_label in classes:
+        means = np.append(means, [mean_of_class(train_features, train_targets, class_label)], axis = 0) 
+        covs = np.append(covs, [covar_of_class(train_features, train_targets, class_label)], axis = 0)
+    likelihoods = np.empty((0, len(classes)))
+    likelihood_row = np.zeros(len(classes))
+    sort, count = np.unique(test_targets, return_counts = True)
+    print(count)
+    for i in range(test_features.shape[0]):
+        for j in classes:
+            likelihood_row[j] = likelihood_of_class(test_features[i], means[j], covs[j]) * (count[j]/test_features.shape[0])
+        likelihoods = np.append(likelihoods, [likelihood_row], axis = 0)
+    return np.array(likelihoods)
+
+likelihoods_apost = maximum_aposteriori(train_features, train_targets, test_features, classes)
+predictions_apost = predict(likelihoods_apost)
+
+def accuracy(
+    predictions: np.ndarray,
+    test_targets: np.ndarray,
+) -> float:
+    
+    difference = test_targets - predictions
+    count = np.count_nonzero(difference)
+    return (1 - (count/len(predictions)))
+
+max_accuracy = accuracy(predictions_max, test_targets)
+apost_accuracy = accuracy(predictions_apost, test_targets)
+
+def confusion_matrix(
+    predictions: np.ndarray,
+    test_targets: np.ndarray,
+    classes: list,
+) -> np.ndarray:
+    con_mat = np.zeros((len(classes), len(classes)))
+    for i in range(len(test_targets)):
+        con_mat[int(predictions[i]),test_targets[i]] += 1
+    return con_mat
+
+max_conmat = confusion_matrix(predictions_max, test_targets, classes)
+apost_conmat = confusion_matrix(predictions_apost, test_targets, classes)
+print(max_conmat)
+print(apost_conmat)
