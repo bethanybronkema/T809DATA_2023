@@ -1,6 +1,6 @@
-# Author: 
-# Date:
-# Project: 
+# Author: Bethany Bronkema
+# Date: 18 September 2023
+# Project: Classification
 # Acknowledgements: 
 #
 
@@ -21,8 +21,11 @@ def mean_of_class(
     Estimate the mean of a selected class given all features
     and targets in a dataset
     '''
-    ...
-
+    collect_mu = np.empty((0,features.shape[1]))
+    for i in range(features.shape[0]):
+        if targets[i] == selected_class:
+            collect_mu = np.append(collect_mu, [features[i]], axis = 0)
+    return np.mean(collect_mu, axis = 0)
 
 def covar_of_class(
     features: np.ndarray,
@@ -33,8 +36,20 @@ def covar_of_class(
     Estimate the covariance of a selected class given all
     features and targets in a dataset
     '''
-    ...
+    collect_cov = np.empty((0, features.shape[1]))
+    for i in range(features.shape[0]):
+        print(i)
+        if targets[i] == selected_class:
+            collect_cov = np.append(collect_cov, [features[i]], axis = 0)
+        print(collect_cov)
+        return np.cov(collect_cov)
 
+np.random.seed(1234)
+features, targets, classes = load_iris()
+(train_features, train_targets), (test_features, test_targets)\
+    = split_train_test(features, targets, train_ratio=0.6)   
+ 
+print(covar_of_class(train_features, train_targets, 0))
 
 def likelihood_of_class(
     feature: np.ndarray,
