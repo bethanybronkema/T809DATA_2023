@@ -42,7 +42,6 @@ def covar_of_class(
             collect_cov = np.append(collect_cov, [features[i]], axis = 0)
     return np.cov(collect_cov, rowvar = False)
 
-np.random.seed(1234)
 features, targets, classes = load_iris()
 (train_features, train_targets), (test_features, test_targets)\
     = split_train_test(features, targets, train_ratio=0.6)   
@@ -59,7 +58,7 @@ def likelihood_of_class(
     '''
     prob = multivariate_normal.pdf(feature, class_mean, class_covar)
     return prob
-np.random.seed(1234)
+
 class_mean = mean_of_class(train_features, train_targets, 0)
 class_cov = covar_of_class(train_features, train_targets, 0)
 
@@ -104,7 +103,6 @@ def predict(likelihoods: np.ndarray):
         pred[i] = np.argmax(likelihoods[i])
     return pred
 
-np.random.seed(1234)
 likelihoods_max = maximum_likelihood(train_features, train_targets, test_features, classes)
 predictions_max = predict(likelihoods_max)
 
@@ -130,12 +128,14 @@ def maximum_aposteriori(
     likelihoods = np.empty((0, len(classes)))
     likelihood_row = np.zeros(len(classes))
     sort, count = np.unique(test_targets, return_counts = True)
-    print(count)
     for i in range(test_features.shape[0]):
         for j in classes:
             likelihood_row[j] = likelihood_of_class(test_features[i], means[j], covs[j]) * (count[j]/test_features.shape[0])
         likelihoods = np.append(likelihoods, [likelihood_row], axis = 0)
     return np.array(likelihoods)
+
+#f = open("2_2.txt", "w+")
+#f.write("For this situation, there is not a difference between either the accuracy or the confusion matrix for the two methods. Each produce an accuracy of 0.983, corresponding to 1 error in the confusion matrix (got class 2, actual class 1). This similarity makes sense since the sample provided to analyze had an approximately even split between the classes, so accounting for the aposteriori probability did not change the result.")
 
 likelihoods_apost = maximum_aposteriori(train_features, train_targets, test_features, classes)
 predictions_apost = predict(likelihoods_apost)
@@ -151,6 +151,8 @@ def accuracy(
 
 max_accuracy = accuracy(predictions_max, test_targets)
 apost_accuracy = accuracy(predictions_apost, test_targets)
+#print(max_accuracy)
+#print (apost_accuracy)
 
 def confusion_matrix(
     predictions: np.ndarray,
@@ -164,5 +166,5 @@ def confusion_matrix(
 
 max_conmat = confusion_matrix(predictions_max, test_targets, classes)
 apost_conmat = confusion_matrix(predictions_apost, test_targets, classes)
-print(max_conmat)
-print(apost_conmat)
+#print(max_conmat)
+#print(apost_conmat)
