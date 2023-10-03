@@ -1,6 +1,6 @@
-# Author: 
-# Date:
-# Project: 
+# Author: Bethany Bronkema
+# Date: 3 October 2023
+# Project: Boosting
 # Acknowledgements: 
 #
 
@@ -22,22 +22,89 @@ from sklearn.metrics import (confusion_matrix, accuracy_score, recall_score, pre
 
 from tools import get_titanic, build_kaggle_submission
 
-
 def get_better_titanic():
     '''
     Loads the cleaned titanic dataset but change
     how we handle the age column.
     '''
-    pass
+    # Load in the raw data
+    # check if data directory exists for Mimir submissions
+    # DO NOT REMOVE
+    if os.path.exists('./data/train.csv'):
+        train = pd.read_csv('./data/train.csv')
+        test = pd.read_csv('./data/test.csv')
+    else:
+        train = pd.read_csv('08_boosting/data/train.csv')
+        test = pd.read_csv('08_boosting/data/test.csv')
 
+    # Concatenate the train and test set into a single dataframe
+    # we drop the `Survived` column from the train set
+    X_full = pd.concat([train.drop('Survived', axis=1), test], axis=0)
+
+    # The cabin category consist of a letter and a number.
+    # We can divide the cabin category by extracting the first
+    # letter and use that to create a new category. So before we
+    # drop the `Cabin` column we extract these values
+    X_full['Cabin_mapped'] = X_full['Cabin'].astype(str).str[0]
+    # Then we transform the letters into numbers
+    cabin_dict = {k: i for i, k in enumerate(X_full.Cabin_mapped.unique())}
+    X_full.loc[:, 'Cabin_mapped'] =\
+        X_full.loc[:, 'Cabin_mapped'].map(cabin_dict)
+
+    # We drop multiple columns that contain a lot of NaN values
+    # in this assignment
+    # Maybe we should
+    X_full.drop(
+        ['PassengerId', 'Cabin', 'Name', 'Ticket'],
+        inplace=True, axis=1)
+    # Instead of dropping the Embarked column we replace NaN values
+    # with `S` denoting Southampton, the most common embarking
+    # location
+    age_mode = X_full.Age.mode()[0]
+    X_full['Age'].fillna(age_mode, inplace=True)
+    # Instead of dropping the fare column we replace NaN values
+    # with the 3rd class passenger fare mean.
+    fare_mean = X_full[X_full.Pclass == 3].Fare.mean()
+    X_full['Fare'].fillna(fare_mean, inplace=True)
+    # Instead of dropping the Embarked column we replace NaN values
+    # with `S` denoting Southampton, the most common embarking
+    # location
+    X_full['Embarked'].fillna('S', inplace=True)
+
+    # We then use the get_dummies function to transform text
+    # and non-numerical values into binary categories.
+    X_dummies = pd.get_dummies(
+        X_full,
+        columns=['Sex', 'Cabin_mapped', 'Embarked'],
+        drop_first=True)
+
+    # We now have the cleaned data we can use in the assignment
+    X = X_dummies[:len(train)]
+    submission_X = X_dummies[len(train):]
+    y = train.Survived
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=.3, random_state=5, stratify=y)
+
+    return (X_train, y_train), (X_test, y_test), submission_X
+
+(tr_X, tr_y), (tst_X, tst_y), submission_X = get_better_titanic()
+
+#f = open('1.2_txt', 'w+')
+#f.write('Instead of deleting the column, I chose to use the most common value that appeared in the age column. I got this by using the .mode function and replaced the NaN values using the same method as described in the original function for the Fare and Embarked columns')
 
 def rfc_train_test(X_train, t_train, X_test, t_test):
     '''
     Train a random forest classifier on (X_train, t_train)
     and evaluate it on (X_test, t_test)
     '''
-    pass
+    forest = RandomForestClassifier()
+    forest.fit(X_train, t_train)
+    predictions = forest.predict(X_test)
 
+    return accuracy_score(t_test, predictions), precision_score(t_test, predictions), recall_score(t_test, predictions)
+
+#f = open('2_2.txt', 'w+')
+#f.write('For fitting the classifier, I used all the default parameters. This means that 100 decision trees were used and there were no weights added to any of the classes. Gini impurity is the default impurity measure, so I used this as well. I did not impose a maximum or minimum node count, so allowed the trees to grow fully since random forest are fairly robust to overfitting. I retured a value of 0.8134 for accuracy, 0.7732 for precision, and 0.7282 for recall.')
 
 def gb_train_test(X_train, t_train, X_test, t_test):
     '''

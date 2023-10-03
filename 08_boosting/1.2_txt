@@ -1,0 +1,1 @@
+Instead of deleting the column, I chose to use the most common value that appeared in the age column. I got this by using the .mode function and replaced the NaN values using the same method as described in the original function for the Fare and Embarked columns

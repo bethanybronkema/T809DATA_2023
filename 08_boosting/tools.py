@@ -15,8 +15,8 @@ def get_titanic():
         train = pd.read_csv('./data/train.csv')
         test = pd.read_csv('./data/test.csv')
     else:
-        train = pd.read_csv('train.csv')
-        test = pd.read_csv('test.csv')
+        train = pd.read_csv('08_boosting/data/train.csv')
+        test = pd.read_csv('08_boosting/data/test.csv')
 
     # Concatenate the train and test set into a single dataframe
     # we drop the `Survived` column from the train set
