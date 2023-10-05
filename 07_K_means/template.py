@@ -38,8 +38,17 @@ def distance_matrix(
     where out[i, j] is the euclidian distance between X[i, :]
     and Mu[j, :]
     '''
-    pass
-
+    
+    dist = np.zeros([X.shape[0], Mu.shape[0]])
+    
+    for j in range(Mu.shape[0]):
+        for i in range(X.shape[0]):
+            sum = X[i]-Mu[j]
+            new_sum = 0
+            for f in range(X.shape[1]):
+                new_sum += np.square(sum[f])
+                dist[i, j] = np.sqrt(new_sum)
+    return dist
 
 def determine_r(dist: np.ndarray) -> np.ndarray:
     '''
@@ -53,9 +62,12 @@ def determine_r(dist: np.ndarray) -> np.ndarray:
     out (np.ndarray): A [n x k] array where out[i, j] is
     1 if sample i is closest to prototype j and 0 otherwise.
     '''
-    pass
-
-
+    matrix = np.zeros([dist.shape[0], dist.shape[1]])
+    for i in range(dist.shape[0]):
+        cluster = np.argmin(dist[i])
+        matrix[i, cluster] = 1
+    return matrix
+            
 def determine_j(R: np.ndarray, dist: np.ndarray) -> float:
     '''
     Calculates the value of the objective function given
