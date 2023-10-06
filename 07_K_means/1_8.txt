@@ -1,0 +1,1 @@
+According to the plot, the best value of k is 10 clusters. Setting k = n would be an example of overfitting, because each point would just be assigned to its own cluster and the cost function would be zero. This sort of classifier would not be able to provide useful information.

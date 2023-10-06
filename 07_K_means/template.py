@@ -82,8 +82,12 @@ def determine_j(R: np.ndarray, dist: np.ndarray) -> float:
     Returns:
     * out (float): The value of the objective function
     '''
-    pass
-
+    cost = 0
+    for n in range(R.shape[0]):
+        for k in range(R.shape[1]):
+            cost += R[n, k] * dist[n, k]
+        
+    return cost/R.shape[0]
 
 def update_Mu(
     Mu: np.ndarray,
@@ -102,8 +106,15 @@ def update_Mu(
     Returns:
     out (np.ndarray): A [k x f] array of updated prototypes.
     '''
-    pass
-
+    for k in range(R.shape[1]):
+        num = 0
+        den = 0
+        for n in range(R.shape[0]):
+            num = num + R[n, k] * X[n]
+            den = den + R[n, k]
+        Mu[k] = num/den
+            
+    return Mu
 
 def k_means(
     X: np.ndarray,
@@ -120,22 +131,37 @@ def k_means(
     nn = sk.utils.shuffle(range(X_standard.shape[0]))
     Mu = X_standard[nn[0: k], :]
 
-    # !!! Your code here !!!
+    j_hat = np.zeros(num_its)
+    for i in range(num_its):
+        dist = distance_matrix(X_standard, Mu)
+        resps = determine_r(dist)
+        j_hat[i] = determine_j(resps, dist)
+        Mu = update_Mu(Mu, X_standard, resps)
 
     # Then we have to "de-standardize" the prototypes
     for i in range(k):
         Mu[i, :] = Mu[i, :] * X_std + X_mean
 
-    # !!! Your code here !!!
-
+    return Mu, resps, j_hat
 
 def _plot_j():
-    pass
-
+    X, y, c = load_iris()
+    Mu, resps, j_hat = k_means(X, 4, 10)
+    plt.plot(j_hat)
+    plt.show()
 
 def _plot_multi_j():
-    pass
+    K = [2, 3, 5, 10]
+    
+    X, y, c = load_iris()
+    for k in K:
+        Mu, resps, j_hat = k_means(X, k, 10)
+        plt.plot(j_hat)
+    plt.legend('2' '3' '5' '10')
+    plt.show()
 
+#f = open('1_8.txt', 'w+')
+#f.write('According to the plot, the best value of k is 10 clusters. Setting k = n would be an example of overfitting, because each point would just be assigned to its own cluster and the cost function would be zero. This sort of classifier would not be able to provide useful information.')
 
 def k_means_predict(
     X: np.ndarray,
@@ -158,8 +184,25 @@ def k_means_predict(
     Returns:
     * the predictions (list)
     '''
-    pass
+    Mu, resps, j_hat = k_means(X, len(classes), num_its)
+    predictions = np.zeros(X.shape[0])
+    collect = []
+    for k in range(len(classes)):
+        for n in range(X.shape[0]):
+            if resps[n, k] == 1:
+                collect = np.append(collect, t[n])
+        values, counts = np.unique(collect, return_counts = True)
+        assign = values[counts.argmax()]
+        #print(assign)
+        for n in range(X.shape[0]):
+            #print(n)
+            if resps[n, k] == 1:
+                predictions[n] = assign
+    return predictions   
 
+
+X, y, c = load_iris()
+print(k_means_predict(X, y, c, 5))
 
 def _iris_kmeans_accuracy():
     pass
