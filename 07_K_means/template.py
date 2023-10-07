@@ -189,12 +189,12 @@ def k_means_predict(
     collect = []
     for k in range(len(classes)):
         for n in range(X.shape[0]):
-            if resps[n, k] == 1:
-                collect = np.append(collect, t[n])
+            if t[n] == k:
+                collect = np.append(collect, np.nonzero(resps[n]))
         values, counts = np.unique(collect, return_counts = True)
         assign = values[counts.argmax()]
         for n in range(X.shape[0]):
-            if resps[n, k] == 1:
+            if t[n] == k:
                 predictions[n] = assign
     return predictions   
 
@@ -206,6 +206,7 @@ def _iris_kmeans_accuracy():
     print(accuracy)
     print(con_mat)
 
+_iris_kmeans_accuracy()
 #f = open('1_10.txt', 'w+')
 #f.write('The accuracy is 0.6 or 60 percent and the confusion matrix is [50 0 0], [10 40 0], [33 17 0]')
 
