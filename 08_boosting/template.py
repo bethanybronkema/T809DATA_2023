@@ -111,8 +111,14 @@ def gb_train_test(X_train, t_train, X_test, t_test):
     Train a Gradient boosting classifier on (X_train, t_train)
     and evaluate it on (X_test, t_test)
     '''
-    pass
+    gradient = GradientBoostingClassifier()
+    gradient.fit(X_train, t_train)
+    predictions = gradient.predict(X_test)
 
+    return accuracy_score(t_test, predictions), precision_score(t_test, predictions), recall_score(t_test, predictions)
+
+#f = open('2_4.txt', 'w+')
+#f.write('For the Gradient boosting classifier, the accuracy was 0.813, the precision was 0.785, and the recall was 0.709. In comparison to the random forest, the accuracy is the same, the precision is higher, and the recall is lower.')
 
 def param_search(X, y):
     '''
@@ -121,9 +127,9 @@ def param_search(X, y):
     '''
     # Create the parameter grid
     gb_param_grid = {
-        'n_estimators': [...],
-        'max_depth': [...],
-        'learning_rate': [...]}
+        'n_estimators': [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95],
+        'max_depth': [5, 10, 15, 20, 25, 30, 35, 40, 45],
+        'learning_rate': [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]}
     # Instantiate the regressor
     gb = GradientBoostingClassifier()
     # Perform random search
@@ -139,6 +145,7 @@ def param_search(X, y):
     # Print the best parameters and lowest RMSE
     return gb_random.best_params_
 
+print(param_search(tr_X, tr_y))
 
 def gb_optimized_train_test(X_train, t_train, X_test, t_test):
     '''

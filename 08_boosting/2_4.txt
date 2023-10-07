@@ -1,0 +1,1 @@
+For the Gradient boosting classifier, the accuracy was 0.813, the precision was 0.785, and the recall was 0.709. In comparison to the random forest, the accuracy is the same, the precision is higher, and the recall is lower.
