@@ -193,34 +193,36 @@ def k_means_predict(
                 collect = np.append(collect, t[n])
         values, counts = np.unique(collect, return_counts = True)
         assign = values[counts.argmax()]
-        #print(assign)
         for n in range(X.shape[0]):
-            #print(n)
             if resps[n, k] == 1:
                 predictions[n] = assign
     return predictions   
 
-
-X, y, c = load_iris()
-print(k_means_predict(X, y, c, 5))
-
 def _iris_kmeans_accuracy():
-    pass
+    X, y, c = load_iris()
+    predictions = k_means_predict(X, y, c, 5)
+    accuracy = accuracy_score(y, predictions)
+    con_mat = confusion_matrix(y, predictions)
+    print(accuracy)
+    print(con_mat)
 
+#f = open('1_10.txt', 'w+')
+#f.write('The accuracy is 0.6 or 60 percent and the confusion matrix is [50 0 0], [10 40 0], [33 17 0]')
 
 def _my_kmeans_on_image():
-    pass
-
+    image, (w, h) = image_to_numpy('07_K_means/images/buoys.png')
+    cluster = k_means(image, 7, 5)
+    return cluster
 
 def plot_image_clusters(n_clusters: int):
     '''
     Plot the clusters found using sklearn k-means.
     '''
-    image, (w, h) = image_to_numpy()
-    ...
-    plt.subplot('121')
+    image, (w, h) = image_to_numpy('07_K_means/images/buoys.png')
+    kmeans = KMeans(n_clusters=n_clusters).fit(image)
+    plt.subplot(121)
     plt.imshow(image.reshape(w, h, 3))
-    plt.subplot('122')
+    plt.subplot(122)
     # uncomment the following line to run
-    # plt.imshow(kmeans.labels_.reshape(w, h), cmap="plasma")
+    plt.imshow(kmeans.labels_.reshape(w, h), cmap="plasma")
     plt.show()
