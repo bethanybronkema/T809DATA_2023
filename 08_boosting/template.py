@@ -145,7 +145,8 @@ def param_search(X, y):
     # Print the best parameters and lowest RMSE
     return gb_random.best_params_
 
-print(param_search(tr_X, tr_y))
+f = open('2_5.txt', 'w+')
+f.write('Using the param_search function, it was found that the best values of parameters were n_estimators = 95, max_depth = 5, and learning_rate = 0.1.')
 
 def gb_optimized_train_test(X_train, t_train, X_test, t_test):
     '''
@@ -153,8 +154,11 @@ def gb_optimized_train_test(X_train, t_train, X_test, t_test):
     and evaluate it on (X_test, t_test) with
     your own optimized parameters
     '''
-    pass
+    gradient = GradientBoostingClassifier(n_estimators=95, max_depth=5, learning_rate=0.1)
+    gradient.fit(X_train, t_train)
+    predictions = gradient.predict(X_test)
 
+    return accuracy_score(t_test, predictions), precision_score(t_test, predictions), recall_score(t_test, predictions)
 
 def _create_submission():
     '''Create your kaggle submission
