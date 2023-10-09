@@ -194,8 +194,10 @@ def k_means_predict(
         values, counts = np.unique(collect, return_counts = True)
         assign = values[counts.argmax()]
         for n in range(X.shape[0]):
-            if t[n] == k:
-                predictions[n] = assign
+            index = np.nonzero(resps[n])
+            index = int(index[0])
+            if int(index) == int(assign):
+                predictions[n] = k
     return predictions   
 
 def _iris_kmeans_accuracy():
