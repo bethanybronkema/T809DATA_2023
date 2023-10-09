@@ -145,8 +145,8 @@ def param_search(X, y):
     # Print the best parameters and lowest RMSE
     return gb_random.best_params_
 
-f = open('2_5.txt', 'w+')
-f.write('Using the param_search function, it was found that the best values of parameters were n_estimators = 95, max_depth = 5, and learning_rate = 0.1.')
+#f = open('2_5.txt', 'w+')
+#f.write('Using the param_search function, it was found that the best values of parameters were n_estimators = 95, max_depth = 5, and learning_rate = 0.1.')
 
 def gb_optimized_train_test(X_train, t_train, X_test, t_test):
     '''
