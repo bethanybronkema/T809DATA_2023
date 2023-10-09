@@ -185,9 +185,9 @@ def k_means_predict(
     * the predictions (list)
     '''
     Mu, resps, j_hat = k_means(X, len(classes), num_its)
-    predictions = np.zeros(X.shape[0])
-    collect = []
+    predictions = np.zeros(t.shape)
     for k in range(len(classes)):
+        collect = []
         for n in range(X.shape[0]):
             if t[n] == k:
                 collect = np.append(collect, np.nonzero(resps[n]))
