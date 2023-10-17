@@ -60,26 +60,11 @@ def ffnn(
         a2[k], y[k] = perceptron(z1, W2[:, k])
     return y, z0, z1, a1, a2
 
-
 np.random.seed(123)
 
 features, targets, classes = load_iris()
 (train_features, train_targets), (test_features, test_targets) = \
     split_train_test(features, targets)
-
-# initialize the random generator to get repeatable results
-np.random.seed(1234)
-
-# Take one point:
-x = train_features[0, :]
-K = 3 # number of classes
-M = 10
-D = 4
-# Initialize two random weight matrices
-W1 = 2 * np.random.rand(D + 1, M) - 1
-W2 = 2 * np.random.rand(M + 1, K) - 1
-y, z0, z1, a1, a2 = ffnn(x, M, K, W1, W2)
-print('y: ', y, '\nz0: ', z0, '\nz1: ', z1, '\na1: ', a1, '\na2: ', a2)
 
 def backprop(
     x: np.ndarray,
@@ -93,8 +78,45 @@ def backprop(
     Perform the backpropagation on given weights W1 and W2
     for the given input pair x, target_y
     '''
-    ...
+    y, z0, z1, a1, a2 = ffnn(x, M, K, W1, W2)
+    delta_k = np.zeros(K)
+    for k in range(K):
+        delta_k[k] = y[k] - target_y[k]
+    delta_j = np.zeros(M)
+    w_sum = np.sum(W2, axis = 1)
+    k_sum = np.sum(delta_k)
+    for m in range(M):
+        delta_j[m] = d_sigmoid(a1[m])*w_sum[m]*k_sum
+    dE1 = np.zeros([W1.shape[0], W1.shape[1]])
+    dE2 = np.zeros([W2.shape[0], W2.shape[1]])
+    for i in range(len(z0)):
+        for j in range(len(delta_j)):
+            dE1[i, j] = delta_j[j]*z0[i]
+    for j in range(len(z1)):
+        for k in range(len(delta_k)):
+            dE2[j, k] = delta_k[k]*z1[j]
 
+    return y, dE1, dE2
+
+# initialize random generator to get predictable results
+np.random.seed(42)
+
+K = 3  # number of classes
+M = 6
+D = train_features.shape[1]
+
+x = features[0, :]
+
+# create one-hot target for the feature
+target_y = np.zeros(K)
+target_y[targets[0]] = 1.0
+
+# Initialize two random weight matrices
+W1 = 2 * np.random.rand(D + 1, M) - 1
+W2 = 2 * np.random.rand(M + 1, K) - 1
+
+y, dE1, dE2 = backprop(x, target_y, M, K, W1, W2)
+print('y: ', y, '\ndE1: ', dE1, '\ndE2: ', dE2)
 
 def train_nn(
     X_train: np.ndarray,
