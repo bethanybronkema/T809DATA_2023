@@ -95,25 +95,6 @@ def backprop(
 
     return y, dE1, dE2
 
-# initialize random generator to get predictable results
-np.random.seed(42)
-
-K = 3  # number of classes
-M = 6
-D = train_features.shape[1]
-
-x = features[0, :]
-
-# create one-hot target for the feature
-target_y = np.zeros(K)
-target_y[targets[0]] = 1.0
-
-# Initialize two random weight matrices
-W1 = 2 * np.random.rand(D + 1, M) - 1
-W2 = 2 * np.random.rand(M + 1, K) - 1
-
-y, dE1, dE2 = backprop(x, target_y, M, K, W1, W2)
-print('y: ', y, '\ndE1: ', dE1, '\ndE2: ', dE2)
 
 def train_nn(
     X_train: np.ndarray,
@@ -133,7 +114,30 @@ def train_nn(
     3. Backpropagating the error through the network to adjust
     the weights.
     '''
-    ...
+    W1tr = np.zeros(W1.shape)
+    W2tr = np.zeros(W2.shape)
+    E_total = np.zeros(iterations)
+    misclassification_rate = np.zeros(iterations)
+    last_guesses = np.zeros(X_train.shape[0])
+
+
+
+    return W1tr, W2tr, E_total, misclassification_rate, last_guesses
+
+# initialize the random seed to get predictable results
+np.random.seed(1234)
+
+K = 3  # number of classes
+M = 6
+D = train_features.shape[1]
+
+# Initialize two random weight matrices
+W1 = 2 * np.random.rand(D + 1, M) - 1
+W2 = 2 * np.random.rand(M + 1, K) - 1
+W1tr, W2tr, E_total, misclassification_rate, last_guesses = train_nn(
+    train_features[:20, :], train_targets[:20], M, K, W1, W2, 500, 0.1)
+
+print('W1tr:\n', W1tr, '\nW2tr:\n', W2tr, '\nE_total:\n', E_total, '\nmisclassification_rate:\n', misclassification_rate, '\nlast_guesses:\n', last_guesses)
 
 
 def test_nn(
