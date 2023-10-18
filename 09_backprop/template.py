@@ -79,14 +79,11 @@ def backprop(
     for the given input pair x, target_y
     '''
     y, z0, z1, a1, a2 = ffnn(x, M, K, W1, W2)
-    delta_k = np.zeros(K)
-    for k in range(K):
-        delta_k[k] = y[k] - target_y[k]
+    delta_k = y - target_y
     delta_j = np.zeros(M)
-    w_sum = np.sum(W2, axis = 1)
-    k_sum = np.sum(delta_k)
-    for m in range(M):
-        delta_j[m] = d_sigmoid(a1[m])*w_sum[m]*k_sum
+    for j in range(M):
+        for k in range(K):
+            delta_j[j] = delta_j[j] + d_sigmoid(a1[j])*W2[j+1, k]*delta_k[k]
     dE1 = np.zeros([W1.shape[0], W1.shape[1]])
     dE2 = np.zeros([W2.shape[0], W2.shape[1]])
     for i in range(len(z0)):
