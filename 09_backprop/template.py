@@ -123,14 +123,14 @@ def train_nn(
         dE1_total = np.zeros(W1.shape)
         dE2_total = np.zeros(W2.shape)
         for j in range(X_train.shape[0]):
-            y, dE1, dE2 = backprop(X_train[j], t_train[j], M, K, W1, W2)
+            target_y = np.zeros(K)
+            target_y[t_train[j]] = 1.0
+            y, dE1, dE2 = backprop(X_train[j], target_y, M, K, W1, W2)
             dE1_total += dE1
             dE2_total += dE2
             last_guesses[j] = np.argmax(y)
         W1 = W1 - eta * dE1_total/N
         W2 = W2 - eta * dE2_total/N
-
-    
 
     return W1, W2, E_total, misclassification_rate, last_guesses
 
