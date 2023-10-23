@@ -114,15 +114,25 @@ def train_nn(
     3. Backpropagating the error through the network to adjust
     the weights.
     '''
-    W1tr = np.zeros(W1.shape)
-    W2tr = np.zeros(W2.shape)
     E_total = np.zeros(iterations)
     misclassification_rate = np.zeros(iterations)
     last_guesses = np.zeros(X_train.shape[0])
+    N = X_train.shape[0]
 
+    for i in range(iterations):
+        dE1_total = np.zeros(W1.shape)
+        dE2_total = np.zeros(W2.shape)
+        for j in range(X_train.shape[0]):
+            y, dE1, dE2 = backprop(X_train[j], t_train[j], M, K, W1, W2)
+            dE1_total += dE1
+            dE2_total += dE2
+            last_guesses[j] = np.argmax(y)
+        W1 = W1 - eta * dE1_total/N
+        W2 = W2 - eta * dE2_total/N
 
+    
 
-    return W1tr, W2tr, E_total, misclassification_rate, last_guesses
+    return W1, W2, E_total, misclassification_rate, last_guesses
 
 # initialize the random seed to get predictable results
 np.random.seed(1234)
