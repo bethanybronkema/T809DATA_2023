@@ -1,5 +1,6 @@
 from typing import Union
 import numpy as np
+import matplotlib.pyplot as plt
 
 from tools import load_iris, split_train_test
 
@@ -60,12 +61,6 @@ def ffnn(
         a2[k], y[k] = perceptron(z1, W2[:, k])
     return y, z0, z1, a1, a2
 
-np.random.seed(123)
-
-features, targets, classes = load_iris()
-(train_features, train_targets), (test_features, test_targets) = \
-    split_train_test(features, targets)
-
 def backprop(
     x: np.ndarray,
     target_y: np.ndarray,
@@ -94,7 +89,6 @@ def backprop(
             dE2[j, k] = delta_k[k]*z1[j]
 
     return y, dE1, dE2
-
 
 def train_nn(
     X_train: np.ndarray,
@@ -129,26 +123,11 @@ def train_nn(
             dE1_total += dE1
             dE2_total += dE2
             last_guesses[j] = np.argmax(y)
+            E_total[i] -= (target_y@np.log(y)) + ((1-target_y)@np.log(1-y))
+            misclassification_rate[i] += np.count_nonzero(t_train[j] - last_guesses[j])
         W1 = W1 - eta * dE1_total/N
         W2 = W2 - eta * dE2_total/N
-
-    return W1, W2, E_total, misclassification_rate, last_guesses
-
-# initialize the random seed to get predictable results
-np.random.seed(1234)
-
-K = 3  # number of classes
-M = 6
-D = train_features.shape[1]
-
-# Initialize two random weight matrices
-W1 = 2 * np.random.rand(D + 1, M) - 1
-W2 = 2 * np.random.rand(M + 1, K) - 1
-W1tr, W2tr, E_total, misclassification_rate, last_guesses = train_nn(
-    train_features[:20, :], train_targets[:20], M, K, W1, W2, 500, 0.1)
-
-print('W1tr:\n', W1tr, '\nW2tr:\n', W2tr, '\nE_total:\n', E_total, '\nmisclassification_rate:\n', misclassification_rate, '\nlast_guesses:\n', last_guesses)
-
+    return W1, W2, E_total/N, misclassification_rate/N, last_guesses
 
 def test_nn(
     X: np.ndarray,
@@ -161,8 +140,37 @@ def test_nn(
     Return the predictions made by a network for all features
     in the test set X.
     '''
-    ...
+    con_mat = np.zeros((K, K))
+    guesses = np.zeros(X.shape[0])
+    for i in range(X.shape[0]):
+        y, z0, z1, a1, a2 = ffnn(X[i], M, K, W1, W2)
+        guesses[i] = np.argmax(y)
+        con_mat[int(guesses[i]),int(test_targets[i])] += 1
+    accuracy = 1-((np.count_nonzero(test_targets - guesses))/X.shape[0])
+    #print('Accuracy:', accuracy)
+    #print('Confusion Matrix:\n', con_mat)
+    plt.plot(E_total)
+    plt.plot(misclassification_rate)
+    plt.legend(['Total Error', 'Misclassification Rate'])
+    #plt.show()
 
+np.random.seed(123)
+
+features, targets, classes = load_iris()
+(train_features, train_targets), (test_features, test_targets) = \
+    split_train_test(features, targets)
+    
+# initialize the random seed to get predictable results
+np.random.seed(1234)
+K = 3  # number of classes
+M = 6
+D = train_features.shape[1]
+
+# Initialize two random weight matrices
+W1 = 2 * np.random.rand(D + 1, M) - 1
+W2 = 2 * np.random.rand(M + 1, K) - 1
+W1tr, W2tr, E_total, misclassification_rate, last_guesses = train_nn(
+    train_features[:20, :], train_targets[:20], M, K, W1, W2, 500, 0.1)
 
 if __name__ == "__main__":
     """
