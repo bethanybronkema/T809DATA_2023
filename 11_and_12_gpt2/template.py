@@ -8,7 +8,16 @@ from tools import get_params
 # Multi-head attention
 
 def softmax(x):
-    pass
+    softmax = np.zeros(x.shape)
+    for i in range(x.shape[0]):
+        for j in range(x.shape[1]):
+            num = np.exp(x[i, j]*-max(x[i,:]))
+            den = np.sum(np.exp(x[i, :]*-max(x[i,:])))
+            softmax[i,j] = num/den
+    return softmax
+
+print(softmax(np.array([[-1., 0.], [0.2, 1.]])))
+
 
 
 def attention(Q, K, V):
