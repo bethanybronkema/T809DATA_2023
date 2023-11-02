@@ -10,37 +10,48 @@ from tools import get_params
 def softmax(x):
     softmax = np.zeros(x.shape)
     for i in range(x.shape[0]):
-        for j in range(x.shape[1]):
-            num = np.exp(x[i, j]*-max(x[i,:]))
-            den = np.sum(np.exp(x[i, :]*-max(x[i,:])))
-            softmax[i,j] = num/den
+        e_x = np.exp(x[i] - np.max(x[i]))
+        softmax[i] = e_x / e_x.sum()
     return softmax
 
-print(softmax(np.array([[-1., 0.], [0.2, 1.]])))
-
-
-
 def attention(Q, K, V):
-    pass
-
+    s_max = softmax((Q @ K.T)/np.sqrt(K.shape[1]))
+    return s_max @ V
 
 def masked_attention(Q, K, V, mask):
-    pass
-
+    s_max_mask = softmax(((Q @ K.T)/np.sqrt(K.shape[1])) + mask)
+    return s_max_mask @ V
 
 def linear_projection(x, w, b):
-    pass
-
+    return x @ w + b
 
 def multi_head_attention(x, attn, number_of_heads):
     w_1, b_1 = attn["c_attn"]["w"], attn["c_attn"]["b"]
     w_2, b_2 = attn["c_proj"]["w"], attn["c_proj"]["b"]
     mask = (1 - np.tri(x.shape[0], dtype=x.dtype)) * -1e10
-    """
-        Your code here
-    """
+    lin1 = linear_projection(x, w_1, b_1)
+    Q, K, V = np.split(lin1, 3, axis=1)
+    Q_heads = np.split(Q, number_of_heads, axis=1)
+    K_heads = np.split(K, number_of_heads, axis=1)
+    V_heads = np.split(V, number_of_heads, axis=1)
+    for i in range(number_of_heads):
+        mask_att = masked_attention(Q_heads[i], K_heads[i], V_heads[i], mask)
+        if i == 0:
+            merge = mask_att
+        else:
+            merge = np.concatenate((merge, mask_att), axis=1)
+    x = linear_projection(merge, w_2, b_2)
     return x
 
+np.random.seed(4321)
+x = np.random.rand(3,4)
+w_1 = np.random.rand(4,12)
+b_1 = np.random.rand(3,1)
+w_2 = np.random.rand(4,3)
+b_2 = np.random.rand(3,1)
+attn = {"c_attn": {"w": w_1, "b": b_1}, "c_proj": {"w": w_2, "b": b_2}}
+x = multi_head_attention(x, attn, 2)
+print('x =\n', x)
 
 # Transformer blocks and GPT2
 
