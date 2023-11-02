@@ -43,16 +43,6 @@ def multi_head_attention(x, attn, number_of_heads):
     x = linear_projection(merge, w_2, b_2)
     return x
 
-np.random.seed(4321)
-x = np.random.rand(3,4)
-w_1 = np.random.rand(4,12)
-b_1 = np.random.rand(3,1)
-w_2 = np.random.rand(4,3)
-b_2 = np.random.rand(3,1)
-attn = {"c_attn": {"w": w_1, "b": b_1}, "c_proj": {"w": w_2, "b": b_2}}
-x = multi_head_attention(x, attn, 2)
-print('x =\n', x)
-
 # Transformer blocks and GPT2
 
 
