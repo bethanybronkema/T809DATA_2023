@@ -45,42 +45,49 @@ def multi_head_attention(x, attn, number_of_heads):
 
 # Transformer blocks and GPT2
 
-
 def gelu(x):
-    pass
-
+    return 0.5*x*(1+np.tanh(np.sqrt(2/np.pi)*(x + 0.044715 * np.power(x, 3))))
 
 def layer_normalization(x, g, b, eps=1e-5):
-    pass
-
+    mu = np.mean(x, axis=1, keepdims=True)
+    sigma = np.var(x, axis=1, keepdims=True)
+    N = (x - mu)/(np.sqrt(sigma+eps))
+    for i in range(N.shape[0]):
+        N[i] = g[i]*N[i] + b[i]
+    return N
 
 def feed_forward_network(x, mlp):
     w_1, b_1 = mlp["c_fc"]["w"], mlp["c_fc"]["b"]
     w_2, b_2 = mlp["c_proj"]["w"], mlp["c_proj"]["b"]
-    """
-        Your code here
-    """
-    return x
-
+    lp1 = linear_projection(x, w_1, b_1)
+    act = gelu(lp1)
+    lp2 = linear_projection(act, w_2, b_2)
+    return lp2
 
 def transformer_block(x, block, number_of_heads):
     mlp, attn = block["mlp"], block["attn"]
     ln_1, ln_2 = block["ln_1"], block["ln_2"]
     g_1, b_1, g_2, b_2 = ln_1["g"], ln_1["b"], ln_2["g"], ln_2["b"]
-    """
-        Your code here
-    """
-    return x
+    ln1 = layer_normalization(x, g_1, b_1)
+    pass1 = multi_head_attention(ln1, attn, number_of_heads)
+    storedx = pass1 + x
+    ln2 = layer_normalization(storedx, g_2, b_2)
+    fpass = feed_forward_network(ln2, mlp)
+    return fpass + storedx
 
 
 def gpt2(inputs, wte, wpe, blocks, ln_f, number_of_heads):
+    print(blocks)
     g_final, b_final = ln_f["g"], ln_f["b"]
-    x = wte[inputs] + wpe[range(len(inputs))]  # Step 1: Sum positional encoding and token encoding 
-    """
-        Your code here
-    """
-    return x @ wte.T
-
+    x = wte[inputs] + wpe[range(len(inputs))]  # Step 1: Sum positional encoding and token encoding
+    for i in range(len(blocks)):
+        fpass = transformer_block(x, blocks[i], number_of_heads)
+        if i == 0:
+            merge = fpass
+        else:
+            merge = np.concatenate((merge, fpass), axis=1)
+    ln = layer_normalization(fpass, g_final, b_final)
+    return ln @ wte.T
 
 def generate(input_text, tokens_to_generate=40, model_size="124M", models_dir="models", loading_bar=True):
     assert model_size in ["124M", "355M", "774M", "1558M"]
@@ -125,10 +132,10 @@ if __name__ == "__main__":
     You can test your code inside this scope without having to comment it out
     everytime before submitting. It also makes it easier for you to
     know what is going on in your code.
-    
-    Test your implemetntation with something like this:
-    print(generate("Hello! How do you do?"))
-
+    """
+    #Test your implemetntation with something like this:
+    print(generate("Hello! How do you do?"))    
+    """
     You can try out different sized models from this list: ["124M", "355M", "774M", "1558M"]
     Make sure you have enough space on your device since the bigger models are quite large.
     """
