@@ -77,7 +77,6 @@ def transformer_block(x, block, number_of_heads):
 
 
 def gpt2(inputs, wte, wpe, blocks, ln_f, number_of_heads):
-    print(blocks)
     g_final, b_final = ln_f["g"], ln_f["b"]
     x = wte[inputs] + wpe[range(len(inputs))]  # Step 1: Sum positional encoding and token encoding
     for i in range(len(blocks)):
