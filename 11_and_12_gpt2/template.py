@@ -79,13 +79,10 @@ def transformer_block(x, block, number_of_heads):
 def gpt2(inputs, wte, wpe, blocks, ln_f, number_of_heads):
     g_final, b_final = ln_f["g"], ln_f["b"]
     x = wte[inputs] + wpe[range(len(inputs))]  # Step 1: Sum positional encoding and token encoding
-    for i in range(len(blocks)):
-        fpass = transformer_block(x, blocks[i], number_of_heads)
-        if i == 0:
-            merge = fpass
-        else:
-            merge = np.concatenate((merge, fpass), axis=1)
-    ln = layer_normalization(fpass, g_final, b_final)
+    for block in range(len(blocks)):
+        x = transformer_block(x, block, number_of_heads)
+
+    ln = layer_normalization(x, g_final, b_final)
     return ln @ wte.T
 
 def generate(input_text, tokens_to_generate=40, model_size="124M", models_dir="models", loading_bar=True):
